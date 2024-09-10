@@ -1,0 +1,196 @@
+                    <!DOCTYPE html>
+                    <html lang="ko">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>My Account</title>
+                        <style>
+                            @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+                            * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                            }
+
+                            body {
+                                font-family: 'Pretendard', sans-serif;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                                background-color: #ffffff;
+                                overflow: hidden;
+                            }
+
+                            .container {
+                                position: relative;
+                                width: 100%;
+                                max-width: 750px;
+                                padding: 20px;
+                                background-color: rgba(255, 255, 255, 0.9); /* 컨테이너 투명도 */
+                                border-radius: 16px;
+                                box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+                                transform: translateY(20px);
+                                opacity: 0;
+                                animation: fadeInUp 0.8s ease-out forwards;
+                            }
+
+                            @keyframes fadeInUp {
+                                to {
+                                    transform: translateY(0);
+                                    opacity: 1;
+                                }
+                            }
+
+                            .background {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: url('https://i.ibb.co/3Thk8ss/image.png') no-repeat center center fixed;
+                                background-size: cover;
+                                filter: blur(3px);
+                                z-index: -1;
+                            }
+
+                            h1 {
+                                font-size: 1.6em;
+                                font-weight: 700;
+                                color: #333;
+                                margin-bottom: 20px;
+                            }
+
+                            p {
+                                font-size: 1.1em;
+                                color: #555;
+                                margin-bottom: 20px;
+                            }
+
+                            .small-table {
+                                width: 80%;
+                                margin: 0 auto 20px;
+                                border-collapse: collapse;
+                            }
+
+                            .small-table th, .small-table td {
+                                padding: 10px;
+                                border: 1px solid #ddd;
+                                text-align: center;
+                            }
+
+                            .small-table th {
+                                background-color: #f4f4f4;
+                                font-weight: 600;
+                            }
+
+                            .small-table td {
+                                background-color: #fff;
+                            }
+
+                            .info-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 20px;
+                            }
+
+                            .info-table th, .info-table td {
+                                padding: 15px;
+                                border: 1px solid #ddd;
+                                text-align: left;
+                            }
+
+                            .info-table th {
+                                background-color: #f4f4f4;
+                                font-weight: 600;
+                            }
+
+                            .info-table td {
+                                background-color: #fff;
+                            }
+
+                            .info-table tr:nth-child(even) {
+                                background-color: #f9f9f9;
+                            }
+
+                            .sponsor-img {
+                                width: 300px;
+                                height: 82px;
+                                margin: 20px auto;
+                                opacity: 0.9;
+                                filter: grayscale(0%) contrast(70%);
+                                display: block;
+                            }
+
+                        </style>
+                    </head>
+                    <body>
+
+                        <div class="background"></div>
+
+                        <div class="container">
+                            <h1 id="greeting">안녕하세요. 홍길동님.</h1>
+                            <p>현재 회원님의 자사주 보유현황을 안내드립니다.</p>
+
+                            <!-- 주주명, 증권계좌 표 -->
+                            <table class="small-table">
+                                <tr>
+                                    <th>주주명</th>
+                                    <td id="name">홍길동</td>
+                                </tr>
+                                <tr>
+                                    <th>증권계좌</th>
+                                    <td id="account">키움증권 12341234</td>
+                                </tr>
+                            </table>
+
+                            <!-- 보유주수, 1주당 가격, 평가금액 표 -->
+                            <table class="info-table">
+                                <tr>
+                                    <th>보유주수</th>
+                                    <td id="shares">100주</td>
+                                </tr>
+                                <tr>
+                                    <th>1주당 가격</th>
+                                    <td id="price">20,000원</td>
+                                </tr>
+                                <tr>
+                                    <th>평가금액</th>
+                                    <td id="total-value">2,000,000원</td>
+                                </tr>
+                            </table>
+
+                            <!-- 스폰서 이미지 -->
+                            <img src="https://i.ibb.co/JKspvzt/image.png" alt="Sponsor" class="sponsor-img">
+
+                        </div>
+
+                        <script>
+                            async function loadData() {
+                                try {
+                                    // JSON 파일에서 데이터 가져오기
+                                    const response = await fetch('data.json');
+                                    const data = await response.json();
+
+                                    // 총 평가금액 계산
+                                    const totalValue = data.shares * data.pricePerShare;
+
+                                    // HTML 요소에 데이터 입력
+                                    document.getElementById('greeting').textContent = `안녕하세요. ${data.name}님.`;
+                                    document.getElementById('name').textContent = data.name;
+                                    document.getElementById('account').textContent = data.account;
+                                    document.getElementById('shares').textContent = `${data.shares}주`;
+                                    document.getElementById('price').textContent = `${data.pricePerShare.toLocaleString()}원`;
+                                    document.getElementById('total-value').textContent = `${totalValue.toLocaleString()}원`;
+                                } catch (error) {
+                                    console.error('Error loading JSON data:', error);
+                                }
+                            }
+
+                            // 데이터 로드 함수 호출
+                            loadData();
+                        </script>
+
+                    </body>
+                    </html>
